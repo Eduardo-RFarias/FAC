@@ -25,11 +25,10 @@
 # return 0;
 # }
 
-# # n = $s0; numbers = $s1; max = $a0; i = $t0
+# # n = $s0; max = $a0; i = $t0
 
 .data
 endl: .asciiz "\n"
-numbers: .word  100000
 
 .text
 main:
@@ -40,50 +39,33 @@ main:
     move    $s0,                $v0
 
 # read n numbers and store them in $s1 array
-    li      $t0,                0                               # $i = 0
-    la      $s1,                numbers                         # $s1 = numbers
-    move    $t1,                $s1                             # $t1 = $s1
+    li      $t0,                0                           # $i = 0
 
 readNumbersLoop:
-    bge     $t0,                $s0,        endReadNumbersLoop  # if i >= n, jump to endReadNumbersLoop
+    bge     $t0,                $s0,    endReadNumbersLoop  # if i >= n, jump to endReadNumbersLoop
 
     li      $v0,                5
-    syscall                                                     # read a number and store it in $v0
+    syscall                                                 # read a number and store it in $v0
 
-    sw      $v0,                0($t1)                          # store the value of $v0 in the array[$t1]
-    addi    $t1,                $t1,        4                   # $t1 = $t1 + 4
+    bne     $t0,                $zero,  jumpLine            # if i != 0, jump the next line
+    move    $a0,                $v0                         # max = $v0
+jumpLine:
 
-    addi    $t0,                $t0,        1                   # i++
-    j       readNumbersLoop                                     # jump to readNumbersLoop
+    bge     $a0,                $v0,    jumpLine2           # if max >= $v0, jump the nextLine
+    move    $a0,                $v0                         # max = $v0
+jumpLine2:
+
+    addi    $t0,                $t0,    1                   # i++
+    j       readNumbersLoop                                 # jump to readNumbersLoop
 
 endReadNumbersLoop:
 
-# show all numbers in the array
-    li      $t0,                0                               # $i = 0
-    lw      $a0,                0($s1)                          # $a0 = numbers[0]
-    move    $t1,                $s1                             # $t1 = $s1
-
-showNumbersLoop:
-    bge     $t0,                $s0,        endShowNumbersLoop  # if i >= n, jump to endShowNumbersLoop
-
-    lw      $t2,                0($t1)                          # load the value of the array[$t1] in $t2
-    addi    $t1,                $t1,        4                   # $t1 = $t1 + 4
-
-    ble     $t2,                $a0,        continue            # if $t2 <= $a0, jump to continue
-    move    $a0,                $t2                             # $a0 = $t2
-
-continue:
-    addi    $t0,                $t0,        1                   # i++
-    j       showNumbersLoop                                     # jump to showNumbersLoop
-
-endShowNumbersLoop:
-
     li      $v0,                1
-    syscall                                                     # print the max value
+    syscall                                                 # print the max value
 
     li      $v0,                4
     la      $a0,                endl
-    syscall                                                     # print a new line
+    syscall                                                 # print a new line
 
 # end of program
     li      $v0,                10
