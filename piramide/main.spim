@@ -1,0 +1,105 @@
+# Código em C
+
+# int main()
+# {
+# unsigned int n;
+# scanf("%u", &n);
+
+# // Para descobrir o tamanho da linha a fórmula é 2n - 1
+# // Foi manipulada da fórmula geral de PA: a1 + r(n-1), a1 = 1 e r = 2
+# unsigned int tamLinha = 2 * n - 1;
+
+# // Repetição para cada linha
+# for (int i = 0; i < n; i++)
+# {
+# // Repetição para cada caractere da linha (note que j = 1)
+# for (int j = 1; j <= tamLinha; j++)
+# {
+# // A posição de início dos * é a posição da mediana - o numero da linha
+# unsigned int start = n - i;
+# // A posição de fim dos * é a posição da mediana + o numero da linha
+# unsigned int end = n + i;
+
+# // Caso a posição atual não esteja entre o início e fim dos *, imprime um espaço
+# if (j < start || j > end)
+# printf(" ");
+# // Caso contrário, imprime um *
+# else
+# printf("*");
+# }
+# // Ao fim da linha, imprime uma quebra de linha
+# printf("\n");
+# }
+
+# return 0;
+# }
+
+# # n = $s0, tamLinha = $s1, start = $t2, end = $t3
+
+.data
+endl: .asciiz "\n"
+star: .asciiz "*"
+space: .asciiz " "
+
+.text
+main:
+
+# Read N and store it in $s0
+    li      $v0,                5                           # set syscall number to 5 (read int)
+    syscall 
+    move    $s0,                $v0                         # store result of read in $s0
+
+# Calculate tamLinha and store it in $s1
+    li      $t0,                2
+    mul     $s1,                $t0,    $s0                 # tamLinha = 2 * n
+
+    li      $t0,                1
+    sub     $s1,                $s1,    $t0                 # tamLinha = tamLinha - 1
+
+# Begin loops
+    li      $t0,                1                           # i = 0
+
+# Loop for each line
+lineLoop:
+    beq     $t0,                $s0,    exit                # if (i == n) exit
+    li      $t1,                1                           # j = 0
+
+# Loop for each character in line
+charLoop:
+    bgt     $t1,                $s1,    continueLineLoop    # if (j > tamLinha) continueLineLoop
+
+    sub     $t2,                $s0,    $t0                 # t2 = n - i
+
+    add     $t3,                $s0,    $t0                 # t3 = n + i
+
+    blt     $t1,                $t2,    printSpace          # if j < t2 printSpace
+    bgt     $t1,                $t3,    continueCharLoop    # if j > t3 continueCharLoop
+    j       printStar                                       # else printStar
+
+printStar:
+    li      $v0,                4
+    la      $a0,                star
+    syscall 
+    j       continueCharLoop
+
+printSpace:
+    li      $v0,                4
+    la      $a0,                space
+    syscall 
+    j       continueCharLoop
+
+continueCharLoop:
+    addi    $t1,                $t1,    1                   # j++
+    j       charLoop                                        # goto charLoop
+
+continueLineLoop:
+    li      $v0,                4                           # set syscall number to 4 (write string)
+    la      $a0,                endl                        # set string to endl
+    syscall 
+
+    addi    $t0,                $t0,    1                   # i++
+    j       lineLoop                                        # goto lineLoop
+
+exit:
+    li      $v0,                10                          # set syscall number to 10 (exit)
+    syscall 

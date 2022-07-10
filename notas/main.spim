@@ -1,0 +1,98 @@
+# Código em C
+
+# int main()
+# {
+# unsigned int n;
+# scanf("%u", &n);
+
+# if (n == 0)
+# printf("E\n");
+
+# else if (n <= 35)
+# printf("D\n");
+
+# else if (n <= 60)
+# printf("C\n");
+
+# else if (n <= 85)
+# printf("B\n");
+
+# else if (n <= 100)
+# printf("A\n");
+
+# return 0;
+# }
+
+# # n = $s0
+
+.data
+A: .asciiz "A\n"
+B: .asciiz "B\n"
+C: .asciiz "C\n"
+D: .asciiz "D\n"
+E: .asciiz "E\n"
+
+.text
+main:
+
+# read n and store it in $s0
+    li      $v0,    5               # set syscall number to 5 (read int)
+    syscall 
+    move    $s0,    $v0             # store read value in $s0
+
+# if n == 0, print E
+    beq     $s0,    $zero,  showE
+
+# if n <= 35, print D
+    li      $t0,    35
+    ble     $s0,    $t0,    showD
+
+# if n <= 60, print C
+    li      $t0,    60
+    ble     $s0,    $t0,    showC
+
+# if n <= 85, print B
+    li      $t0,    85
+    ble     $s0,    $t0,    showB
+
+# if n <= 100, print A
+    li      $t0,    100
+    ble     $s0,    $t0,    showA
+
+# else
+    j       end
+
+showE:
+    li      $v0,    4               # set syscall number to 4 (write string)
+    la      $a0,    E               # load string E into $a0
+    syscall 
+    j       end
+
+showD:
+    li      $v0,    4               # set syscall number to 4 (write string)
+    la      $a0,    D               # load string D into $a0
+    syscall 
+    j       end
+
+showC:
+    li      $v0,    4               # set syscall number to 4 (write string)
+    la      $a0,    C               # load string C into $a0
+    syscall 
+    j       end
+
+showB:
+    li      $v0,    4               # set syscall number to 4 (write string)
+    la      $a0,    B               # load string B into $a0
+    syscall 
+    j       end
+
+showA:
+    li      $v0,    4               # set syscall number to 4 (write string)
+    la      $a0,    A               # load string A into $a0
+    syscall 
+    j       end
+
+# end program
+end:
+    li      $v0,    10              # set syscall number to 10 (exit)
+    syscall 

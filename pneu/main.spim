@@ -1,0 +1,46 @@
+# Código em C
+
+# int main()
+# {
+# unsigned int n, m;
+# scanf("%u", &n);
+# scanf("%u", &m);
+
+# int diff = n - m;
+
+# printf("%d\n", diff);
+# }
+
+# # n = $s0; m = $s1; diff = $a0;
+
+.data
+endl: .asciiz "\n"
+
+.text
+main:
+
+# read n and store it in $s0
+    li      $v0,    5               # set syscall number 5 (read int)
+    syscall 
+    move    $s0,    $v0             # store read value in $s0
+
+# read m and store it in $s1
+    li      $v0,    5               # set syscall number 5 (read int)
+    syscall 
+    move    $s1,    $v0             # store read value in $s1
+
+# calculate difference and store it in $a0
+    sub     $a0,    $s0,    $s1
+
+# print difference (diff already in $a0)
+    li      $v0,    1               # set syscall number 1 (print int)
+    syscall 
+
+# print line break
+    li      $v0,    4               # set syscall number 4 (print string)
+    la      $a0,    endl
+    syscall 
+
+# end program
+    li      $v0,    10              # set syscall number 10 (exit)
+    syscall 

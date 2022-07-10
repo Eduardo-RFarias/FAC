@@ -1,0 +1,22 @@
+# Hello world in C
+
+# int main(){
+# char hello[] = "Ola Mundo\n";
+
+# printf("%s", hello);
+
+# return 0;
+# }
+
+.data
+hello: .asciiz "Ola Mundo\n"# hello = "Hello, world!\n"
+
+.text
+main:
+
+    li      $v0,    4       # $v0 = 4, Prepare system call in code 4 (print string)
+    la      $a0,    hello   # $a0 = &hello, Load address of hello into $a0
+    syscall                 # Call system call: printf("Ola Mundo\n")
+
+    li      $v0,    10      # $v0 = 10, Prepare system call in code 10 (exit)
+    syscall                 # Call system call: exit()

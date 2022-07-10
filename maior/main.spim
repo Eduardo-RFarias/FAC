@@ -1,0 +1,90 @@
+# Código em C
+
+# int main()
+# {
+# unsigned int n;
+# scanf("%u", &n);
+
+# int numbers[n];
+# for (int i = 0; i < n; i++)
+# {
+# scanf("%d", &numbers[i]);
+# }
+
+# int max = numbers[0];
+# for (int i = 1; i < n; i++)
+# {
+# if (numbers[i] > max)
+# {
+# max = numbers[i];
+# }
+# }
+
+# printf("%d", max);
+
+# return 0;
+# }
+
+# # n = $s0; numbers = $s1; max = $a0; i = $t0
+
+.data
+endl: .asciiz "\n"
+numbers: .word  100000
+
+.text
+main:
+
+# read n and store it in $s0
+    li      $v0,                5
+    syscall 
+    move    $s0,                $v0
+
+# read n numbers and store them in $s1 array
+    li      $t0,                0                               # $i = 0
+    la      $s1,                numbers                         # $s1 = numbers
+    move    $t1,                $s1                             # $t1 = $s1
+
+readNumbersLoop:
+    bge     $t0,                $s0,        endReadNumbersLoop  # if i >= n, jump to endReadNumbersLoop
+
+    li      $v0,                5
+    syscall                                                     # read a number and store it in $v0
+
+    sw      $v0,                0($t1)                          # store the value of $v0 in the array[$t1]
+    addi    $t1,                $t1,        4                   # $t1 = $t1 + 4
+
+    addi    $t0,                $t0,        1                   # i++
+    j       readNumbersLoop                                     # jump to readNumbersLoop
+
+endReadNumbersLoop:
+
+# show all numbers in the array
+    li      $t0,                0                               # $i = 0
+    lw      $a0,                0($s1)                          # $a0 = numbers[0]
+    move    $t1,                $s1                             # $t1 = $s1
+
+showNumbersLoop:
+    bge     $t0,                $s0,        endShowNumbersLoop  # if i >= n, jump to endShowNumbersLoop
+
+    lw      $t2,                0($t1)                          # load the value of the array[$t1] in $t2
+    addi    $t1,                $t1,        4                   # $t1 = $t1 + 4
+
+    ble     $t2,                $a0,        continue            # if $t2 <= $a0, jump to continue
+    move    $a0,                $t2                             # $a0 = $t2
+
+continue:
+    addi    $t0,                $t0,        1                   # i++
+    j       showNumbersLoop                                     # jump to showNumbersLoop
+
+endShowNumbersLoop:
+
+    li      $v0,                1
+    syscall                                                     # print the max value
+
+    li      $v0,                4
+    la      $a0,                endl
+    syscall                                                     # print a new line
+
+# end of program
+    li      $v0,                10
+    syscall 

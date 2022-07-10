@@ -1,0 +1,47 @@
+# Codigo em C
+
+# int main(){
+# unsigned int n1, n2;
+
+# scanf("%u", &n1);
+# scanf("%u", &n2);
+
+# unsigned int sum = n1 + n2;
+
+# printf("%u\n", sum);
+# }
+
+# # n1 = $s0; n2 = $s1; sum = $a0
+
+.data
+endl: .asciiz "\n"
+
+.text
+main:
+
+# read n1 and store it in $s0
+    li      $v0,    5               # set system call number to 5 (read int)
+    syscall 
+    move    $s0,    $v0             # store result of syscall in $s0
+
+# read n2 and store it in $s1
+    li      $v0,    5               # set system call number to 5 (read int)
+    syscall 
+    move    $s1,    $v0             # store result of syscall in $s1
+
+
+# add n1 and n2 and store it in $a0
+    add     $a0,    $s0,    $s1     # $a0 is the argument for the syscall (print int)
+
+# print sum (sum is already in $a0)
+    li      $v0,    1               # set system call number to 1 (print int)
+    syscall 
+
+# print the line break
+    li      $v0,    4               # set system call number to 4 (print string)
+    la      $a0,    endl            # load the string "\n" into $a0
+    syscall 
+
+# end of program
+    li      $v0,    10              # set system call number to 10 (exit)
+    syscall 
